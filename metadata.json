@@ -1,0 +1,6 @@
+{
+  "name": "La Terminal — Panadería & Confitería",
+  "description": "Sitio web oficial de Panadería La Terminal en Neuquén 1450, Villa Constitución. Panificados artesanales, galería de @laterminal_panaderia, carrusel conectado a AppSheet API y ubicación en Google Maps.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
