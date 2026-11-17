@@ -1,19 +1,7 @@
-import { useMemo, useState } from 'react';
 import { ArrowUpRight, Clock, MapPin, Star } from 'lucide-react';
 import { BAKERY_INFO, GOOGLE_REVIEWS_SUMMARY } from '@/src/data/bakeryData';
 
-type ReviewFilter = 'all' | 'five';
-
 export function LocationAndReviews() {
-  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all');
-
-  const filteredReviews = useMemo(() => {
-    if (reviewFilter === 'five') {
-      return GOOGLE_REVIEWS_SUMMARY.reviews.filter((rev) => rev.rating === 5);
-    }
-    return GOOGLE_REVIEWS_SUMMARY.reviews;
-  }, [reviewFilter]);
-
   return (
     <section
       id="ubicacion"
@@ -111,47 +99,23 @@ export function LocationAndReviews() {
                         ))}
                       </div>
                       <p className="mt-1 text-xs text-[#4f4440] tabular-nums">
-                        Basado en {GOOGLE_REVIEWS_SUMMARY.totalReviews} valoraciones locales
+                        {GOOGLE_REVIEWS_SUMMARY.totalReviews} opiniones · consultado el{' '}
+                        {GOOGLE_REVIEWS_SUMMARY.lastUpdated}
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Filtro de reseñas */}
-              <div className="py-4 flex items-center justify-between gap-3">
+              <div className="py-4">
                 <span className="text-xs font-medium text-[#4f4440]">
-                  Opiniones destacadas
+                  Reseñas recientes de Google Maps
                 </span>
-                <div className="flex items-center gap-1 p-1 bg-[#f6f3ed] rounded-lg border border-[#d3c3bd]/60">
-                  <button
-                    type="button"
-                    onClick={() => setReviewFilter('all')}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                      reviewFilter === 'all'
-                        ? 'bg-[#ffffff] text-[#210f07] shadow-xs'
-                        : 'text-[#4f4440] hover:text-[#210f07]'
-                    }`}
-                  >
-                    Todas
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setReviewFilter('five')}
-                    className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
-                      reviewFilter === 'five'
-                        ? 'bg-[#ffffff] text-[#210f07] shadow-xs'
-                        : 'text-[#4f4440] hover:text-[#210f07]'
-                    }`}
-                  >
-                    5 estrellas
-                  </button>
-                </div>
               </div>
 
               {/* Lista de reseñas separadas por líneas finas */}
               <div className="divide-y divide-[#d3c3bd]/50">
-                {filteredReviews.map((review) => (
+                {GOOGLE_REVIEWS_SUMMARY.reviews.map((review) => (
                   <article key={review.id} className="py-4 first:pt-2 last:pb-2">
                     <div className="flex items-center justify-between gap-2 mb-1.5">
                       <div>

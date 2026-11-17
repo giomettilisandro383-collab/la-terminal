@@ -10,42 +10,33 @@ export const BAKERY_INFO = {
   instagramHandle: '@laterminal_panaderia',
   instagramUrl: 'https://www.instagram.com/laterminal_panaderia/',
   googleMapsUrl:
-    'https://www.google.com/maps/search/?api=1&query=Neuqu%C3%A9n+1450,+Villa+Constituci%C3%B3n,+Santa+Fe,+Argentina',
+    'https://www.google.com/maps/place/Panader%C3%ADa+La+Terminal/@-33.2405707,-60.3352238,15z/data=!4m6!3m5!1s0x95b76d07123feac9:0x260d5c02f39c0bf5!8m2!3d-33.243801!4d-60.3279496!16s%2Fg%2F11h3k70pfv',
   googleMapsEmbedUrl:
     'https://www.google.com/maps?q=Neuqu%C3%A9n+1450,+Villa+Constituci%C3%B3n,+Santa+Fe,+Argentina&t=&z=16&ie=UTF8&iwloc=&output=embed',
   hours: [
     { days: 'Lunes a Lunes', time: '07:00 a 23:00 hs' },
     { days: 'Abierto', time: 'Todo el año' },
   ],
-  logoImageUrl: '/assets/aistudio/sdfsd_fed6f9c2.png',
+  logoImageUrl: './assets/aistudio/sdfsd_fed6f9c2.png',
   heroImage:
-    '/assets/aistudio/841544856_18113043980130849_1944840226934503889_n__1__b4ee9c45.webp',
+    './assets/aistudio/841544856_18113043980130849_1944840226934503889_n__1__b4ee9c45.webp',
 } as const;
 
 export interface CraftPillar {
   index: string;
-  title: string;
   detail: string;
 }
 
 export const CRAFT_PILLARS: CraftPillar[] = [
   {
-    index: '01',
-    title: 'Pastelería y tortas de autor',
+    index: '1',
     detail:
-      'Tortas artesanales terminadas a mano con crema chantilly, ganache de chocolate, dulce de leche repostero y fruta fresca de estación.',
+      'La panadería tiene una gama de colores grises que resulta agradable a la vista y un espacio generoso para que los clientes puedan desplazarse y buscar los productos que deseen.',
   },
   {
-    index: '02',
-    title: 'Panadería y facturas del día',
+    index: '2',
     detail:
-      'Horneado continuo desde primera hora en Neuquén 1450: panes frescos, medialunas y facturas para acompañar cada mañana en Villa Constitución.',
-  },
-  {
-    index: '03',
-    title: 'Confitería por encargo',
-    detail:
-      'Preparamos tortas para cumpleaños, celebraciones y mesas dulces familiares con rellenos clásicos y decoración artesanal.',
+      'Cuenta con varias áreas, como verdulería, rotisería, kiosco, entre otras.',
   },
 ];
 
@@ -71,7 +62,7 @@ export const INSTAGRAM_POSTS: InstagramPost[] = [
     category: 'Crema Chantilly',
     dateLabel: 'Vitrina de confitería',
     imageSrc:
-      '/assets/aistudio/843073993_18113044001130849_896904780093246451_n_dbb67ce2.webp',
+      './assets/aistudio/843073993_18113044001130849_896904780093246451_n_dbb67ce2.webp',
     imageAlt:
       'Torta artesanal de crema chantilly blanca con copos de dulce de leche, frutos rojos, cerezas y galletitas Oreo',
     permalink: 'https://www.instagram.com/laterminal_panaderia/',
@@ -84,7 +75,7 @@ export const INSTAGRAM_POSTS: InstagramPost[] = [
     category: 'Chocolate',
     dateLabel: 'Especialidad de la casa',
     imageSrc:
-      '/assets/aistudio/841544856_18113043980130849_1944840226934503889_n__1__b4ee9c45.webp',
+      './assets/aistudio/841544856_18113043980130849_1944840226934503889_n__1__b4ee9c45.webp',
     imageAlt:
       'Torta artesanal cubierta de chocolate con frutillas frescas, crema chantilly, dulce de leche y cerezas',
     permalink: 'https://www.instagram.com/laterminal_panaderia/',
@@ -97,7 +88,7 @@ export const INSTAGRAM_POSTS: InstagramPost[] = [
     category: 'Crema Chantilly',
     dateLabel: 'Pedidos y cumpleaños',
     imageSrc:
-      '/assets/aistudio/842915549_18113043956130849_1707834955177675881_n_8e327b19.webp',
+      './assets/aistudio/842915549_18113043956130849_1707834955177675881_n_8e327b19.webp',
     imageAlt:
       'Torta blanca de crema chantilly decorada en corona con frutillas frescas y galletitas Oreo',
     permalink: 'https://www.instagram.com/laterminal_panaderia/',
@@ -110,7 +101,7 @@ export const INSTAGRAM_POSTS: InstagramPost[] = [
     category: 'Chocolate',
     dateLabel: 'Clásico de La Terminal',
     imageSrc:
-      '/assets/aistudio/840205489_18113043965130849_265706614614237961_n_47700bc1.webp',
+      './assets/aistudio/840205489_18113043965130849_265706614614237961_n_47700bc1.webp',
     imageAlt:
       'Torta artesanal de chocolate decorada con rosetas de crema chantilly, cerezas rojas y frutilla central',
     permalink: 'https://www.instagram.com/laterminal_panaderia/',
@@ -127,35 +118,33 @@ export interface GoogleReview {
 }
 
 export const GOOGLE_REVIEWS_SUMMARY = {
-  averageRating: 4.8,
-  totalReviews: 184,
+  averageRating: 4.7,
+  totalReviews: 91,
+  lastUpdated: '17/11/2026',
   reviews: [
     {
       id: 'rev-1',
-      author: 'Mariana Gómez',
-      context: 'Vecina de Villa Constitución',
+      author: 'Carolina Ponce',
+      context: '7 opiniones',
       rating: 5,
-      relativeDate: 'Hace 2 semanas',
-      comment:
-        'Las tortas de confitería son espectaculares, siempre frescas y súper abundantes. Encargamos para cumpleaños y nunca falla.',
+      relativeDate: 'Hace 7 meses',
+      comment: 'Que agrado el lugar servicio y la amabilidad de las chicas...',
     },
     {
       id: 'rev-2',
-      author: 'Luciano Ferreyra',
-      context: 'Guía Local',
+      author: 'sofibarlocci',
+      context: 'Guía local · 26 opiniones',
       rating: 5,
-      relativeDate: 'Hace 1 mes',
-      comment:
-        'Parada obligada por Neuquén 1450. Excelente atención, facturas recién salidas y la torta de chocolate con frutillas es increíble.',
+      relativeDate: 'Hace 10 meses',
+      comment: 'Super completo. En los últimos años han evolucionado un montón...',
     },
     {
       id: 'rev-3',
-      author: 'Carolina Benítez',
-      context: 'Cliente frecuente',
-      rating: 4,
-      relativeDate: 'Hace 1 mes',
-      comment:
-        'Muy buena calidad en pastelería, tortas y panificados del día. Los fines de semana conviene pasar temprano porque la vitrina vuela.',
+      author: 'Daani Emmin',
+      context: '1 opinión',
+      rating: 5,
+      relativeDate: 'Hace 5 meses',
+      comment: 'Siempre la coca cola en el barrio...',
     },
   ] satisfies GoogleReview[],
 };

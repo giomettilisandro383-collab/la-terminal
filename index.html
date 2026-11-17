@@ -21,6 +21,11 @@
       href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script>
+      if (window.location.protocol === 'file:') {
+        window.location.replace(new URL('./docs/index.html', window.location.href).href);
+      }
+    </script>
   </head>
   <body class="bg-[#fcf9f3] text-[#1c1c18] antialiased selection:bg-[#9a4523]/15 selection:text-[#210f07]">
     <div id="root"></div>

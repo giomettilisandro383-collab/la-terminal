@@ -3,14 +3,12 @@
  * INTEGRACIÓN CON APPSHEET REST API v2 — CARRUSEL DE COMBOS (LA TERMINAL)
  * ============================================================================
  *
- * Conecta el carrusel con la API de AppSheet filtrando exclusivamente los
- * registros donde `Categoria` sea igual a "Combo" y extrayendo únicamente
- * las columnas `Imagen` y `Texto` (ignorando columnas administrativas/finanzas).
+ * Conecta el carrusel con la API de AppSheet y usa las columnas `Combo`,
+ * `Producto` y `Porcentaje` (ignorando columnas administrativas/finanzas).
  *
- * ¿QUÉ FALTA PARA ACTIVARLO EN VIVO?
- * - El `ACCESS_KEY` ya está configurado.
- * - Solo falta colocar tu `APP_ID` (Application ID de AppSheet) y verificar el
- *   `TABLE_NAME` exacto en `APPSHEET_CONFIG` aquí abajo o mediante `.env`:
+ * CONFIGURACIÓN:
+ * - El `APP_ID` ya está configurado y puede sobrescribirse mediante `.env`.
+ * - Verificá el nombre exacto de `TABLE_NAME` en `APPSHEET_CONFIG` o `.env`:
  *     VITE_APPSHEET_APP_ID="tu-app-id"
  *     VITE_APPSHEET_TABLE_NAME="Nombre_Exacto_De_Tu_Tabla"
  */
@@ -36,11 +34,11 @@ export const APPSHEET_CONFIG: AppSheetConfig = {
   // 1. URL BASE DE LA API DE APPSHEET:
   BASE_URL: import.meta.env.VITE_APPSHEET_BASE_URL || 'https://www.appsheet.com/api/v2',
 
-  // 2. COLOCÁ AQUÍ TU APPLICATION ID DE APPSHEET (o usá VITE_APPSHEET_APP_ID en .env):
-  APP_ID: import.meta.env.VITE_APPSHEET_APP_ID || '',
+  // 2. APPLICATION ID DE APPSHEET (se puede sobrescribir con VITE_APPSHEET_APP_ID):
+  APP_ID: import.meta.env.VITE_APPSHEET_APP_ID || '6a29b0e8-f9c9-439d-9fb5-2b1f358e7816',
 
   // 3. NOMBRE EXACTO DE LA TABLA EN APPSHEET:
-  TABLE_NAME: import.meta.env.VITE_APPSHEET_TABLE_NAME || 'Galeria_Productos',
+  TABLE_NAME: import.meta.env.VITE_APPSHEET_TABLE_NAME || 'Propaganda',
 
   // 4. APPLICATION ACCESS KEY CONFIGURADO:
   ACCESS_KEY:
@@ -77,16 +75,39 @@ export function resolveAppSheetImageUrl(
 ): string {
   const trimmed = rawImagen.trim();
   if (!trimmed) return '';
-  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+  if (/^https?:\/\//i.test(trimmed)) {
     return trimmed;
   }
-  return `https://www.appsheet.com/template/gettablefileurl?appName=${encodeURIComponent(config.APP_ID.trim())}&tableName=${encodeURIComponent(config.TABLE_NAME.trim())}&fileName=${encodeURIComponent(trimmed)}`;
+
+  const query = new URLSearchParams({
+    appName: config.APP_ID.trim(),
+    tableName: config.TABLE_NAME.trim(),
+    fileName: trimmed,
+  });
+  return `https://www.appsheet.com/template/gettablefileurl?${query.toString()}`;
 }
 
 export type AppSheetFetchResult =
   | { status: 'unconfigured'; slides: [] }
   | { status: 'empty'; slides: [] }
   | { status: 'ready'; slides: AppSheetComboSlide[] };
+
+function formatAppSheetPercentage(value: unknown): string {
+  const stringValue = typeof value === 'string' ? value.trim() : '';
+  const includesPercentSymbol = stringValue.endsWith('%');
+  const numericValue =
+    typeof value === 'number'
+      ? value
+      : typeof value === 'string'
+        ? Number(stringValue.replace(/%$/, '').replace(',', '.'))
+        : Number.NaN;
+
+  if (!Number.isFinite(numericValue)) return '';
+
+  const percentage =
+    includesPercentSymbol || Math.abs(numericValue) > 1 ? numericValue : numericValue * 100;
+  return `${new Intl.NumberFormat('es-AR', { maximumFractionDigits: 2 }).format(percentage)}% de descuento`;
+}
 
 /**
  * ============================================================================
@@ -135,24 +156,18 @@ export async function fetchAppSheetCombos(
         ? (data as { Rows: unknown[] }).Rows
         : [];
 
-    // 1. FILTRAR Y MAPEAR: Nos quedamos solo con Categoria === 'combo'
-    // y extraemos exclusivamente `Imagen` y `Texto` (ignorando finanzas, costos, etc.).
     const itemsCombo: AppSheetComboSlide[] = rawRows
       .filter((item): item is Record<string, unknown> => typeof item === 'object' && item !== null)
-      .filter(
-        (item) =>
-          typeof item.Categoria === 'string' &&
-          item.Categoria.trim().toLowerCase() === 'combo',
-      )
       .map((item, index) => {
-        const rawImagen = typeof item.Imagen === 'string' ? item.Imagen : '';
-        const rawTexto = typeof item.Texto === 'string' ? item.Texto.trim() : '';
+        const rawImagen = typeof item.Combo === 'string' ? item.Combo : '';
+        const producto = typeof item.Producto === 'string' ? item.Producto.trim() : '';
+        const porcentaje = formatAppSheetPercentage(item.Porcentaje);
         const imagenUrl = resolveAppSheetImageUrl(rawImagen, config);
 
         return {
-          id: String(item.ID ?? item.Id ?? item._RowNumber ?? `combo-${index}`),
+          id: String(item.IDOfertas ?? item.ID ?? item.Id ?? item._RowNumber ?? `combo-${index}`),
           imagenUrl,
-          texto: rawTexto || 'Combo artesanal La Terminal',
+          texto: [producto, porcentaje].filter(Boolean).join(' · ') || 'Combo artesanal La Terminal',
         };
       })
       .filter((combo) => Boolean(combo.imagenUrl));

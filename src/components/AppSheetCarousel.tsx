@@ -131,22 +131,10 @@ export function AppSheetCarousel() {
       className="py-14 sm:py-20 bg-[#f6f3ed] border-y border-[#d3c3bd]/50"
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
-        {/* Encabezado de sección */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 sm:mb-10">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold tracking-wide text-[#9a4523] mb-2">
-              Combos destacados · Conectado a AppSheet API
-            </p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#210f07] leading-tight">
-              Promociones y combos del día
-            </h2>
-          </div>
-
-          <p className="text-sm text-[#4f4440] max-w-sm">
-            Filtra automáticamente los registros de{' '}
-            <span className="font-semibold text-[#210f07]">Categoría: Combo</span>{' '}
-            mostrando únicamente imagen y texto promocional.
-          </p>
+        <div className="mb-8 sm:mb-10">
+          <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#210f07] leading-tight">
+            Promociones
+          </h2>
         </div>
 
         {/* Estado de Carga (Skeleton) */}
@@ -223,7 +211,7 @@ export function AppSheetCarousel() {
                       ? hasAccessKey
                         ? 'Access Key cargado · Falta indicar App ID de AppSheet'
                         : 'Esperando credenciales de AppSheet'
-                      : 'Sin registros en categoría Combo'}
+                      : 'Sin ofertas con imagen en la columna Combo'}
                   </span>
                 </div>
 
@@ -235,8 +223,8 @@ export function AppSheetCarousel() {
 
                 <p className="mt-3 text-sm sm:text-base text-[#4f4440] leading-relaxed max-w-xl">
                   {viewState === 'unconfigured'
-                    ? 'El Application Access Key ya está integrado y el filtro exclusivo por Categoria = "Combo" está activo. Solo falta completar tu APP_ID (y el nombre exacto de la tabla si difiere) en appsheetApi.ts o en .env.'
-                    : `La consulta a la tabla "${APPSHEET_CONFIG.TABLE_NAME}" finalizó correctamente, pero no se encontraron filas con Categoria = "Combo" e Imagen válida.`}
+                    ? 'El carrusel muestra las columnas Producto, Porcentaje y Combo (imagen). Configurá el APP_ID y el nombre exacto de la tabla en appsheetApi.ts o en .env.'
+                    : `La consulta a la tabla "${APPSHEET_CONFIG.TABLE_NAME}" finalizó correctamente, pero no se encontraron ofertas con imagen válida en la columna Combo.`}
                 </p>
 
                 <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -292,13 +280,13 @@ export function AppSheetCarousel() {
                   <div className="flex justify-between gap-4 pb-2 border-b border-[#d3c3bd]/50">
                     <dt className="font-semibold text-[#210f07]">Filtro aplicado</dt>
                     <dd className="text-right text-[#4f4440]">
-                      Categoria === &quot;combo&quot;
+                      Imagen válida en Combo
                     </dd>
                   </div>
                   <div className="flex justify-between gap-4">
                     <dt className="font-semibold text-[#210f07]">Campos usados</dt>
                     <dd className="text-right text-[#4f4440]">
-                      Solo Imagen y Texto
+                      Producto, Porcentaje y Combo
                     </dd>
                   </div>
                 </dl>
@@ -308,7 +296,7 @@ export function AppSheetCarousel() {
             {showIntegrationGuide && (
               <div className="mt-8 pt-6 border-t border-[#d3c3bd]/60">
                 <p className="text-xs font-semibold text-[#4f4440] mb-3">
-                  Lógica activa en <code className="text-[#210f07]">src/services/appsheetApi.ts</code> (solo falta completar <code className="text-[#210f07]">APP_ID</code> y <code className="text-[#210f07]">TABLE_NAME</code>):
+                  Lógica activa en <code className="text-[#210f07]">src/services/appsheetApi.ts</code> usando las columnas <code className="text-[#210f07]">Producto</code>, <code className="text-[#210f07]">Porcentaje</code> y <code className="text-[#210f07]">Combo</code>:
                 </p>
                 <pre className="overflow-x-auto rounded-xl bg-[#210f07] text-[#f6f3ed] p-4 sm:p-5 text-xs leading-relaxed font-mono">
 {`// Endpoint AppSheet REST API v2:
@@ -324,12 +312,10 @@ const response = await fetch(endpoint, {
 });
 
 const itemsCombo = data
-  .filter(item => item.Categoria && item.Categoria.trim().toLowerCase() === 'combo')
+  .filter(item => item.Producto && item.Combo)
   .map(item => ({
-    imagenUrl: item.Imagen.startsWith('http')
-      ? item.Imagen
-      : \`https://www.appsheet.com/template/gettablefileurl?appName=\${APP_ID}&tableName=\${TABLE_NAME}&fileName=\${encodeURIComponent(item.Imagen)}\`,
-    texto: item.Texto || ''
+    imagenUrl: resolveAppSheetImageUrl(item.Combo),
+    texto: \`\${item.Producto} · \${Number(item.Porcentaje) * 100}% de descuento\`
   }));`}
                 </pre>
               </div>
@@ -365,53 +351,34 @@ const itemsCombo = data
             <div className="aspect-[16/10] sm:aspect-[16/9] max-h-[540px] w-full relative">
               <ResilientImage
                 src={currentSlide.imagenUrl}
-                alt={currentSlide.texto}
+                alt=""
                 className="w-full h-full object-cover transition-opacity duration-300"
-                fallbackTitle={currentSlide.texto}
               />
 
-              {/* Scrim medido para legibilidad sobre fotografía */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 bg-gradient-to-t from-[#1c1c18]/85 via-[#1c1c18]/25 to-transparent"
-              />
-
-              {/* Texto del combo */}
-              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                <div className="max-w-xl text-[#fcf9f3]">
-                  <p className="text-xs font-medium text-[#e2c384] mb-1.5">
-                    Combo · Panadería La Terminal
-                  </p>
-                  <h3 className="font-serif text-2xl sm:text-3xl font-normal leading-tight">
-                    {currentSlide.texto}
-                  </h3>
+              {slides.length > 1 && (
+                <div className="absolute inset-y-0 inset-x-4 sm:inset-x-6 flex items-center justify-between pointer-events-none">
+                  <button
+                    type="button"
+                    onClick={goToPrev}
+                    aria-label="Combo anterior"
+                    className="w-11 h-11 rounded-full bg-[#fcf9f3]/90 hover:bg-[#ffffff] text-[#210f07] inline-flex items-center justify-center transition-colors pointer-events-auto"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={goToNext}
+                    aria-label="Siguiente combo"
+                    className="w-11 h-11 rounded-full bg-[#fcf9f3]/90 hover:bg-[#ffffff] text-[#210f07] inline-flex items-center justify-center transition-colors pointer-events-auto"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
                 </div>
-
-                {slides.length > 1 && (
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      type="button"
-                      onClick={goToPrev}
-                      aria-label="Combo anterior"
-                      className="w-11 h-11 rounded-full bg-[#fcf9f3]/90 hover:bg-[#ffffff] text-[#210f07] inline-flex items-center justify-center transition-colors"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={goToNext}
-                      aria-label="Siguiente combo"
-                      className="w-11 h-11 rounded-full bg-[#fcf9f3]/90 hover:bg-[#ffffff] text-[#210f07] inline-flex items-center justify-center transition-colors"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
 
             {slides.length > 1 && (
-              <div className="bg-[#fcf9f3] px-6 py-3.5 border-t border-[#d3c3bd]/60 flex items-center justify-between gap-4">
+              <div className="bg-[#fcf9f3] px-6 py-3.5 border-t border-[#d3c3bd]/60 flex items-center justify-center">
                 <div className="flex items-center gap-2" role="tablist" aria-label="Seleccionar combo">
                   {slides.map((slide, idx) => (
                     <button
@@ -419,7 +386,7 @@ const itemsCombo = data
                       type="button"
                       role="tab"
                       aria-selected={idx === activeIndex}
-                      aria-label={`Ver combo ${idx + 1}: ${slide.texto}`}
+                      aria-label={`Ver combo ${idx + 1}`}
                       onClick={() => setActiveIndex(idx)}
                       className={`h-2.5 rounded-full transition-all duration-150 ${
                         idx === activeIndex
@@ -429,9 +396,6 @@ const itemsCombo = data
                     />
                   ))}
                 </div>
-                <span className="text-xs font-medium text-[#4f4440] tabular-nums">
-                  {activeIndex + 1} / {slides.length}
-                </span>
               </div>
             )}
           </div>

@@ -80,22 +80,20 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Pilares del oficio con numeración editorial humana */}
+        {/* Resumen numerado del local */}
         <div
           id="oficio"
-          className="mt-12 sm:mt-16 pt-10 border-t border-[#d3c3bd]/60 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12"
+          className="mt-12 sm:mt-16 pt-10 border-t border-[#d3c3bd]/60 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12"
         >
           {CRAFT_PILLARS.map((pillar) => (
-            <article key={pillar.index} className="flex flex-col gap-2">
-              <div className="flex items-baseline gap-2.5">
-                <span className="font-serif text-lg text-[#9a4523] tabular-nums">
-                  {pillar.index}.
-                </span>
-                <h2 className="font-serif text-xl font-medium text-[#210f07]">
-                  {pillar.title}
-                </h2>
-              </div>
-              <p className="text-sm sm:text-[15px] leading-relaxed text-[#4f4440]">
+            <article
+              key={pillar.index}
+              className="flex items-start gap-4 rounded-2xl border border-[#d3c3bd]/70 bg-[#ffffff] p-5 sm:p-6 transition-colors duration-200 hover:bg-[#f6f3ed]"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#9a4523] font-serif text-xl font-semibold text-[#fcf9f3] tabular-nums">
+                {pillar.index}.
+              </span>
+              <p className="text-base sm:text-lg font-medium leading-relaxed text-[#210f07]">
                 {pillar.detail}
               </p>
             </article>

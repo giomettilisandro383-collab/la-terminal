@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Wheat } from 'lucide-react';
 
 interface ResilientImageProps {
@@ -15,6 +15,10 @@ export function ResilientImage({
   fallbackTitle,
 }: ResilientImageProps) {
   const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [src]);
 
   if (hasError || !src) {
     return (
@@ -35,7 +39,6 @@ export function ResilientImage({
     <img
       src={src}
       alt={alt}
-      referrerPolicy="no-referrer"
       onError={() => setHasError(true)}
       className={className}
     />
